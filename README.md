@@ -1,7 +1,7 @@
 # chromedriver-binary
 Downloads and installs the [chromedriver](https://sites.google.com/a/chromium.org/chromedriver/) binary version 88.0.4324.27 for automated testing of webapps. The installer supports Linux, MacOS and Windows operating systems.
 
-Alternatively the package [chromedriver-binary-auto](https://pypi.org/project/chromedriver-binary-auto/) can be used to automatically detect the latest chromedriver version required for the installed Chrome/Chromium browser.
+Alternatively the package [proxied-chromedriver-binary-auto](https://pypi.org/project/proxied-chromedriver-binary-auto/) can be used to automatically detect the latest chromedriver version required for the installed Chrome/Chromium browser.
 
 ## Installation
 
