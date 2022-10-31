@@ -1,15 +1,14 @@
 from setuptools import setup
 from setuptools.command.build_py import build_py
 from chromedriver_binary.utils import get_chromedriver_filename, get_chromedriver_url, find_binary_in_path, \
-    check_version, get_chrome_major_version, get_latest_release_for_version
+    check_version, get_chrome_major_version, get_latest_release_for_version, open_url_with_socks_proxy
 
 import os
 import zipfile
-import urllib
 
 try:
     from io import BytesIO
-    from urllib.request import urlopen, URLError
+    from urllib.request import urlopen, URLError, Request
 except ImportError:
     from StringIO import StringIO as BytesIO
     from urllib2 import urlopen, URLError
@@ -22,7 +21,7 @@ with open('README.md') as readme_file:
 
 
 PROXY_URL = 'proxy.mahsan.co'
-PROXY_PORT = '3128'
+PROXY_PORT = 3129
 
 
 class DownloadChromedriver(build_py):
@@ -48,12 +47,7 @@ class DownloadChromedriver(build_py):
                     os.mkdir(chromedriver_dir)
                 url = get_chromedriver_url(version=chromedriver_version)
                 try:
-                    proxy_handler = urllib.request.ProxyHandler({
-                        "http": "http://{}:{}".format(PROXY_URL, PROXY_PORT),
-                        "https": "http://{}:{}".format(PROXY_URL, PROXY_PORT)
-                    })
-                    opener = urllib.request.build_opener(proxy_handler)
-                    response = opener.open(url)
+                    response = open_url_with_socks_proxy(url, PROXY_URL, PROXY_PORT)
                     if response.getcode() != 200:
                         raise URLError('Not Found')
                 except URLError:
@@ -70,7 +64,7 @@ class DownloadChromedriver(build_py):
 
 setup(
     name="proxied-chromedriver-binary-auto",
-    version="0.1",
+    version="0.2",
     author="Iman Azari",
     author_email="azari@mahsan.co",
     description="Installer for chromedriver.",
@@ -78,6 +72,9 @@ setup(
     keywords="chromedriver chrome browser selenium splinter",
     url="https://github.com/imanazari70/proxied-chromedriver-binary-auto",
     packages=['chromedriver_binary'],
+    install_requires=[
+          'PySocks',
+      ],
     package_data={
         'chromedriver_binary': ['chromedriver*']
     },

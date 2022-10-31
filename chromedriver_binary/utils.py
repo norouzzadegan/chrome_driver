@@ -8,9 +8,12 @@ import os
 import subprocess
 import re
 import urllib
+import socks
+import socket
+import ssl
 
 try:
-    from urllib.request import urlopen, URLError
+    from urllib.request import urlopen, URLError, Request
 except ImportError:
     from urllib2 import urlopen, URLError
 
@@ -75,6 +78,17 @@ def find_binary_in_path(filename):
     return None
 
 
+def open_url_with_socks_proxy(url, proxy_url, proxy_port):
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    request = Request(url)
+    socks.set_default_proxy(socks.SOCKS5, proxy_url, proxy_port)
+    socket.socket = socks.socksocket
+    return urlopen(request, context=ctx)
+
+
 def get_latest_release_for_version(proxy_url, proxy_port, version=None):
     """
     Searches for the latest release (complete version string) for a given major `version`. If `version` is None
@@ -88,12 +102,7 @@ def get_latest_release_for_version(proxy_url, proxy_port, version=None):
     if version:
         release_url += '_{}'.format(version)
     try:
-        proxy_handler = urllib.request.ProxyHandler({
-            "http": "http://{}:{}".format(proxy_url, proxy_port),
-            "https": "http://{}:{}".format(proxy_url, proxy_port)
-        })
-        opener = urllib.request.build_opener(proxy_handler)
-        response = opener.open(release_url)
+        response = open_url_with_socks_proxy(release_url, proxy_url, proxy_port)
         if response.getcode() != 200:
             raise URLError('Not Found')
         return response.read().decode('utf-8').strip()
