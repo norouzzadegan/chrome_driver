@@ -9,12 +9,12 @@ Alternatively the package [chromedriver-binary-auto](https://pypi.org/project/ch
 
 #### From PyPI
 ```
-pip install chromedriver-binary
+pip install proxied-chromedriver-binary
 ```
 
 #### From GitHub
 ```
-pip install git+https://github.com/danielkaiser/python-chromedriver-binary.git
+pip install git+https://github.com/imanazari70/proxied-chromedriver-binary-auto
 ```
 
 ### Automatically detected versions
@@ -23,17 +23,17 @@ Please make sure to install Chrome or Chromium first and add the browser to the 
 
 #### From PyPI
 ```
-pip install chromedriver-binary-auto
+pip install proxied-chromedriver-binary-auto
 ```
 
 To redetect the required version and install the newest suitable chromedriver after the first installation simply reinstall the package using
 ```
-pip install --upgrade --force-reinstall chromedriver-binary-auto
+pip install --upgrade --force-reinstall proxied-chromedriver-binary-auto
 ```
 
 #### From GitHub
 ```
-pip install git+https://github.com/danielkaiser/python-chromedriver-binary.git#chromedriver-binary-auto
+pip install git+https://github.com/imanazari70/proxied-chromedriver-binary-auto
 ```
 
 ## Usage
