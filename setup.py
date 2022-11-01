@@ -1,7 +1,7 @@
 from setuptools import setup
 from setuptools.command.build_py import build_py
 from chromedriver_binary.utils import get_chromedriver_filename, get_chromedriver_url, find_binary_in_path, \
-    check_version, get_chrome_major_version, get_latest_release_for_version, open_url_with_socks_proxy
+    check_version, get_chrome_major_version, get_latest_release_for_version, open_url
 
 import os
 import zipfile
@@ -20,10 +20,6 @@ with open('README.md') as readme_file:
     long_description = readme_file.read()
 
 
-PROXY_URL = 'proxy.mahsan.co'
-PROXY_PORT = 3129
-
-
 class DownloadChromedriver(build_py):
     def run(self):
         """
@@ -31,7 +27,7 @@ class DownloadChromedriver(build_py):
         If a chromedriver binary is found in PATH it will be copied, otherwise downloaded.
         """
         chrome_major = get_chrome_major_version()
-        chromedriver_version = get_latest_release_for_version(PROXY_URL, PROXY_PORT, chrome_major)
+        chromedriver_version = get_latest_release_for_version(chrome_major)
         chromedriver_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'chromedriver_binary')
         chromedriver_filename = find_binary_in_path(get_chromedriver_filename())
         if chromedriver_filename and check_version(chromedriver_filename, chromedriver_version):
@@ -47,7 +43,7 @@ class DownloadChromedriver(build_py):
                     os.mkdir(chromedriver_dir)
                 url = get_chromedriver_url(version=chromedriver_version)
                 try:
-                    response = open_url_with_socks_proxy(url, PROXY_URL, PROXY_PORT)
+                    response = open_url(url)
                     if response.getcode() != 200:
                         raise URLError('Not Found')
                 except URLError:
@@ -64,7 +60,7 @@ class DownloadChromedriver(build_py):
 
 setup(
     name="proxied-chromedriver-binary-auto",
-    version="0.2",
+    version="0.3",
     author="Iman Azari",
     author_email="azari@mahsan.co",
     description="Installer for chromedriver.",
@@ -72,7 +68,7 @@ setup(
     keywords="chromedriver chrome browser selenium splinter",
     url="https://github.com/imanazari70/proxied-chromedriver-binary-auto",
     packages=['chromedriver_binary'],
-    install_requires=[
+    setup_requires=[
           'PySocks',
       ],
     package_data={

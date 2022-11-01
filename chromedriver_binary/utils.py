@@ -8,9 +8,10 @@ import os
 import subprocess
 import re
 import urllib
-import socks
 import socket
 import ssl
+
+import urllib.request
 
 try:
     from urllib.request import urlopen, URLError, Request
@@ -78,7 +79,19 @@ def find_binary_in_path(filename):
     return None
 
 
+def open_url(url):
+    if 'HTTP_PROXY' in os.environ:
+        return open_url_with_http_proxy(url, os.environ['HTTP_PROXY'])
+    elif 'SOCKS_PROXY' in os.environ:
+        proxy_url, proxy_port = os.environ['SOCKS_PROXY'].rsplit(':')[-2:]
+        return open_url_with_socks_proxy(url, proxy_url.strip('/'), int(proxy_port))
+    else:
+        return urllib.request.urlopen(url)
+
+
 def open_url_with_socks_proxy(url, proxy_url, proxy_port):
+    import socks
+
     ctx = ssl.create_default_context()
     ctx.check_hostname = False
     ctx.verify_mode = ssl.CERT_NONE
@@ -89,12 +102,19 @@ def open_url_with_socks_proxy(url, proxy_url, proxy_port):
     return urlopen(request, context=ctx)
 
 
-def get_latest_release_for_version(proxy_url, proxy_port, version=None):
+def open_url_with_http_proxy(url, proxy):
+    proxy_support = urllib.request.ProxyHandler(
+        {'http': proxy, 'https': proxy}
+    )
+    opener = urllib.request.build_opener(proxy_support)
+    urllib.request.install_opener(opener)
+    return urllib.request.urlopen(url)
+
+
+def get_latest_release_for_version(version=None):
     """
     Searches for the latest release (complete version string) for a given major `version`. If `version` is None
     the latest release is returned.
-    :param proxy_url: Url of proxy
-    :param proxy_port: Port of proxy
     :param version: Major version number or None
     :return: Latest release for given version
     """
@@ -102,7 +122,7 @@ def get_latest_release_for_version(proxy_url, proxy_port, version=None):
     if version:
         release_url += '_{}'.format(version)
     try:
-        response = open_url_with_socks_proxy(release_url, proxy_url, proxy_port)
+        response = open_url(release_url)
         if response.getcode() != 200:
             raise URLError('Not Found')
         return response.read().decode('utf-8').strip()
