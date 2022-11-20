@@ -48,7 +48,7 @@ def get_chromedriver_url(version):
     :param version: chromedriver version string
     :return: Download URL for chromedriver
     """
-    base_url = 'https://chromedriver.storage.googleapis.com/'
+    base_url = 'https://chromedriver.storage.googleapis.com/' if os.getenv("BASE_URL") is None else os.getenv("BASE_URL")
     if sys.platform.startswith('linux') and sys.maxsize > 2 ** 32:
         platform = 'linux'
         architecture = '64'
@@ -117,8 +117,9 @@ def get_latest_release_for_version(version=None):
     the latest release is returned.
     :param version: Major version number or None
     :return: Latest release for given version
-    """
-    release_url = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+    # """
+    # release_url = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
+    release_url = 'https://chromedriver.storage.googleapis.com/' if os.getenv("RELEASE_URL") is None else os.getenv("RELEASE_URL")
     if version:
         release_url += '_{}'.format(version)
     try:
