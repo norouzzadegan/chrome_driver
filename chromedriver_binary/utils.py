@@ -119,7 +119,7 @@ def get_latest_release_for_version(version=None):
     :return: Latest release for given version
     # """
     # release_url = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
-    release_url = 'https://chromedriver.storage.googleapis.com/' if os.getenv("RELEASE_URL") is None else os.getenv("RELEASE_URL")
+    release_url = 'https://chromedriver.storage.googleapis.com/LATEST_RELEASE' if os.getenv("RELEASE_URL") is None else os.getenv("RELEASE_URL")
     if version:
         release_url += '_{}'.format(version)
     try:

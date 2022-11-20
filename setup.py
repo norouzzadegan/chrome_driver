@@ -27,6 +27,8 @@ class DownloadChromedriver(build_py):
         If a chromedriver binary is found in PATH it will be copied, otherwise downloaded.
         """
         chrome_major = get_chrome_major_version()
+        print('TTTTTTTTTTTTTTTTTTTTT')
+        print(chrome_major)
         chromedriver_version = get_latest_release_for_version(chrome_major)
         chromedriver_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'chromedriver_binary')
         chromedriver_filename = find_binary_in_path(get_chromedriver_filename())
