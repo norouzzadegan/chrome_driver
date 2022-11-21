@@ -52,14 +52,12 @@ def get_chromedriver_url(version):
     if sys.platform.startswith('linux') and sys.maxsize > 2 ** 32:
         platform = 'linux'
         architecture = '64'
-    elif sys.platform == 'darwin':
-        platform = 'mac'
-        architecture = '64'
     elif sys.platform.startswith('win'):
         platform = 'win'
         architecture = '32'
     else:
         raise RuntimeError('Could not determine chromedriver download URL for this platform.')
+    version = '2.31' # Add for test
     return base_url + version + '/chromedriver_' + platform + architecture + '.zip'
 
 
